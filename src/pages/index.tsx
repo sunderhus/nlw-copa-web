@@ -3,7 +3,7 @@ type Props ={count:number}
 
 export default function Home(props:Props) {
   return (
-    <h1>Hello world {props.count}</h1>
+    <h1 className="text-violet-500" >Hello world {props.count}</h1>
   )
 }
 
