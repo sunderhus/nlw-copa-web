@@ -1,7 +1,7 @@
 import { api } from "@/lib/axios";
 import { createPoolService } from "@/services/pools/createPoolsService"
 import {InferGetStaticPropsType } from 'next'
-import Home from "./home"
+import Home from "@/views/home"
 
 
 export default function makeHomeFactory({ 
