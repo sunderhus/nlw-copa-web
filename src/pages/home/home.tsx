@@ -1,17 +1,45 @@
 import Image from 'next/image';
-import appPreviewImage from '../assets/app-nlw-copa-preview.png';
-import logoImage from '../assets/logo.svg';
-import usersAvatarExample from '../assets/users-avatar-example.png';
-import iconCheck from '../assets/icon-check.svg';
-import { api } from '../lib/axios';
+import appPreviewImage from '@/assets/app-nlw-copa-preview.png';
+import logoImage from '@/assets/logo.svg';
+import usersAvatarExample from '@/assets/users-avatar-example.png';
+import iconCheck from '@/assets/icon-check.svg';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 type Props ={
   poolCount:number;
   usersCount:number;
   guessesCount:number;
+  createPool:(poolTitle:string)=>Promise<{code:string}>;
 }
 
 export default function Home(props:Props) {
+  const [poolTitle,setPoolTitle] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const autoFocus = useCallback(()=>{
+    inputRef.current?.focus();
+  },[])
+
+  const handleSubmit = async (event:FormEvent)=>{
+    event.preventDefault();
+
+    try{
+      const {code} = await props.createPool(poolTitle)
+      await navigator.clipboard.writeText(code);
+      alert("Seu bolão foi criado com sucesso, o código foi copiado para a área de transferência");
+
+      setPoolTitle('');
+      autoFocus();
+    }catch(error){
+      const typedError = error as Error
+      alert(typedError.message);
+    }
+  }
+
+  useEffect(()=>{
+    autoFocus()
+  },[autoFocus])
+
   return (
     <div className='max-w-[1124px] mx-auto h-screen grid grid-cols-2 items-center gap-28'>
       <main>
@@ -25,11 +53,14 @@ export default function Home(props:Props) {
           </strong>
         </div>
 
-        <form className='mt-10 flex gap-2'>
+        <form onSubmit={handleSubmit} className='mt-10 flex gap-2'>
           <input 
-            className='flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-sm'
+            className='text-gray-100 flex-1 px-6 py-4 rounded bg-gray-800 border border-gray-600 text-sm'
             type="text"
             required 
+            ref={inputRef}
+            value={poolTitle}
+            onChange={(event)=>setPoolTitle(event.target.value)}
             placeholder='Qual nome do seu bolão?'
           />
           <button 
@@ -62,26 +93,4 @@ export default function Home(props:Props) {
     </div>
 
   )
-}
-
-
-export const getServerSideProps = async ()=>{
- 
-  const [
-    poolCountResponse,
-    guessesCountResponse,
-    usersCountResponse
-  ] = await Promise.all([
-    api.get('/pools/count'),
-    api.get('/guesses/count'),
-    api.get('/users/count')
-  ]);
-  
-  return {
-    props:{
-      poolCount:poolCountResponse.data.count,
-      guessesCount:guessesCountResponse.data.count,
-      usersCount:usersCountResponse.data.count
-    }
-  }
 }
