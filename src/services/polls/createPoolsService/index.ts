@@ -3,10 +3,10 @@ import {AxiosError} from 'axios'
 import { ServiceResponse } from "./interfaces"
 
 
-export const createPoolService = async (poolTitle:string):Promise<ServiceResponse> =>{
+export const createPollService = async (pollTitle:string):Promise<ServiceResponse> =>{
 
     try{
-        const result = await api.post<ServiceResponse>('/pools',{title:poolTitle})
+        const result = await api.post<ServiceResponse>('/polls',{title:pollTitle})
 
         return {
             code:result.data.code

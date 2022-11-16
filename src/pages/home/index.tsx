@@ -1,19 +1,19 @@
 import { api } from "@/lib/axios";
-import { createPoolService } from "@/services/pools/createPoolsService"
+import { createPollService } from "@/services/polls/createPoolsService"
 import {InferGetStaticPropsType } from 'next'
 import Home from "@/views/home"
 
 
 export default function makeHomeFactory({ 
     guessesCount,
-    poolCount,
+    pollCount,
     usersCount
 }:InferGetStaticPropsType<typeof getStaticProps>){
     return (
         <Home 
-            createPool={createPoolService}
+            createPoll={createPollService}
             guessesCount={guessesCount}
-            poolCount={poolCount}
+            pollCount={pollCount}
             usersCount={usersCount}
         />
     )
@@ -21,18 +21,18 @@ export default function makeHomeFactory({
 
 export const getStaticProps = async () => {
     const [
-        poolCountResponse,
+        pollCountResponse,
         guessesCountResponse,
         usersCountResponse
     ] = await Promise.all([
-        api.get('/pools/count'),
+        api.get('/polls/count'),
         api.get('/guesses/count'),
         api.get('/users/count')
     ]);
 
     return {
         props: {
-            poolCount: poolCountResponse.data.count,
+            pollCount: pollCountResponse.data.count,
             guessesCount: guessesCountResponse.data.count,
             usersCount: usersCountResponse.data.count
         },

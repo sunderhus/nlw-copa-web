@@ -6,14 +6,14 @@ import iconCheck from '@/assets/icon-check.svg';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 type Props ={
-  poolCount:number;
+  pollCount:number;
   usersCount:number;
   guessesCount:number;
-  createPool:(poolTitle:string)=>Promise<{code:string}>;
+  createPoll:(pollTitle:string)=>Promise<{code:string}>;
 }
 
 export default function Home(props:Props) {
-  const [poolTitle,setPoolTitle] = useState('')
+  const [pollTitle,setPollTitle] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const autoFocus = useCallback(()=>{
@@ -24,11 +24,11 @@ export default function Home(props:Props) {
     event.preventDefault();
 
     try{
-      const {code} = await props.createPool(poolTitle)
+      const {code} = await props.createPoll(pollTitle)
       await navigator.clipboard.writeText(code);
       alert("Seu bolão foi criado com sucesso, o código foi copiado para a área de transferência");
 
-      setPoolTitle('');
+      setPollTitle('');
       autoFocus();
     }catch(error){
       const typedError = error as Error
@@ -59,8 +59,8 @@ export default function Home(props:Props) {
             type="text"
             required 
             ref={inputRef}
-            value={poolTitle}
-            onChange={(event)=>setPoolTitle(event.target.value)}
+            value={pollTitle}
+            onChange={(event)=>setPollTitle(event.target.value)}
             placeholder='Qual nome do seu bolão?'
           />
           <button 
@@ -75,7 +75,7 @@ export default function Home(props:Props) {
           <div className='flex items-center gap-6'>
             <Image src={iconCheck} alt="icon check"/>
             <div className='flex flex-col'>
-              <span className='font-bold text-2xl'>+{props.poolCount}</span>
+              <span className='font-bold text-2xl'>+{props.pollCount}</span>
               <span>Bolões criados</span>
             </div>
           </div>
